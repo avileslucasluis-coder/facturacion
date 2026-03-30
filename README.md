@@ -1,210 +1,164 @@
-# 🚀 Sistema de Facturación con IA
+# Facturación Electrónica Empresarial
 
-Sistema web tipo ERP desarrollado con **FastAPI + HTML/JS**, inspirado en plataformas como Contífico y Siigo.
-Permite gestionar facturas, productos, inventario y análisis con inteligencia artificial.
+Plataforma modular de facturación y gestión administrativa para pymes en Ecuador.
+Este sistema está construido con **FastAPI**, **SQLite**, **HTML/CSS/JS** y una capa de IA que consulta datos reales del negocio.
 
----
+## ✅ Qué incluye
 
-## 📌 Características
+- Autenticación profesional con **JWT Bearer**
+- Backend modular con **routers** y **servicios**
+- Frontend administrativo funcional con panel, productos, facturas y proveedores
+- Base de datos lista para facturación electrónica (SRI)
+- IA útil, verificable y tolerante a falta de OpenAI
+- Pruebas con **pytest**
+- Pipeline de CI con **GitHub Actions**
+- Contenedor Docker listo para producción
 
-* ✅ Gestión de facturas (crear, editar, listar)
-* ✅ Productos e inventario
-* ✅ Retenciones y documentos electrónicos
-* ✅ Generación de PDF y XML
-* ✅ Reportes financieros
-* ✅ Subida de archivos (facturas)
-* 🤖 Análisis con Inteligencia Artificial
-* 🔐 Autenticación de usuarios
+## 🧱 Tecnologías
 
----
-
-## 🧱 Tecnologías utilizadas
-
-* Python 3.10+
-* FastAPI
-* SQLite
-* HTML / CSS / JavaScript
-* OpenAI API (opcional)
-
----
+- Python 3.12
+- FastAPI
+- SQLite
+- SQLAlchemy (para futuro escalado)
+- passlib + bcrypt
+- python-jose
+- reportlab / lxml
+- HTML / CSS / JavaScript
 
 ## 📁 Estructura del proyecto
 
 ```
 facturacionnow/
-│
 ├── src/
-│   ├── api.py                # Backend principal FastAPI
-│   ├── core/                # Seguridad, validaciones, DB
-│   ├── services/            # Lógica de negocio
-│   └── ui.py                # UI lógica
-│
+│   ├── api.py              # Entrada compatible y wrapper a src.main
+│   ├── main.py             # Aplicación FastAPI principal
+│   ├── core/
+│   │   ├── config.py       # Configuración y variables de entorno
+│   │   ├── security.py     # JWT y hashing seguro
+│   │   ├── sri_validator.py
+│   │   └── backend.py      # Capa de datos y acceso a SQLite
+│   ├── db/
+│   │   ├── __init__.py
+│   │   └── database.py     # Alias a la implementación de la capa de datos
+│   ├── routers/            # Endpoints REST organizados
+│   └── services/           # Lógica de negocio y servicios IA
 ├── static/
-│   └── index.html           # Frontend principal
-│
+│   ├── index.html          # Frontend administrativo
+│   ├── css/style.css
+│   └── js/app.js
 ├── data/
-│   └── billing_system.db    # Base de datos
-│
-├── .env                     # Variables de entorno
-├── requirements.txt         # Dependencias
+│   └── billing_system.db
+├── tests/
+│   └── test_app.py
+├── .github/workflows/python-app.yml
+├── Dockerfile
+├── .dockerignore
+├── requirements.txt
 └── README.md
 ```
 
----
+## ⚙️ Instalación local
 
-## ⚙️ Instalación
-
-### 1. Clonar repositorio
+1. Clona el repositorio
 
 ```bash
 git clone https://github.com/avileslucasluis-coder/facturacion.git
-cd facturacion
+cd facturacionnow
 ```
 
----
-
-### 2. Crear entorno virtual
+2. Crea y activa el entorno virtual
 
 ```bash
 python -m venv .venv
+.\.venv\Scripts\activate
 ```
 
-Activar entorno:
-
-**Windows:**
-
-```bash
-.venv\Scripts\activate
-```
-
-**Linux / Mac:**
-
-```bash
-source .venv/bin/activate
-```
-
----
-
-### 3. Instalar dependencias
+3. Instala dependencias
 
 ```bash
 pip install -r requirements.txt
 ```
 
----
-
-## 🔐 Variables de entorno (.env)
-
-Crea un archivo `.env`:
+4. Crea un archivo `.env`
 
 ```env
-OPENAI_API_KEY=tu_api_key_aqui
+JWT_SECRET_KEY=un_valor_muy_seguro
+OPENAI_API_KEY=
+DATABASE_URL=sqlite:///data/billing_system.db
 ```
 
-👉 Si no tienes API KEY, el sistema igual funciona (sin IA avanzada).
-
----
-
-## ▶️ Ejecutar el proyecto
+## ▶️ Ejecutar local
 
 ```bash
 uvicorn src.api:app --reload --host 0.0.0.0 --port 8000
 ```
 
----
-
-## 🌐 Acceso
-
-Abrir en navegador:
+Accede a la app en:
 
 ```text
 http://localhost:8000
 ```
 
-Documentación API:
+Documentación de la API:
 
 ```text
 http://localhost:8000/docs
 ```
 
----
+## 🔐 Usuarios de prueba
 
-## 🔑 Usuario de prueba
+- Usuario: `testuser`
+- Contraseña: `password123`
 
-```text
-Usuario: testuser
-Password: password123
-```
-
----
-
-## 🤖 Funciones de IA
-
-* Análisis de facturas
-* Sugerencia de precios
-* Insights de ventas
-* Extracción de datos
-
----
+> Si no existe, crea uno nuevo con el endpoint de registro.
 
 ## 📡 Endpoints principales
 
-| Método | Endpoint                | Descripción      |
-| ------ | ----------------------- | ---------------- |
-| POST   | /api/auth/login         | Login            |
-| GET    | /api/invoices           | Listar facturas  |
-| POST   | /api/invoices           | Crear factura    |
-| GET    | /api/products           | Listar productos |
-| POST   | /api/ai/analyze-invoice | Analizar factura |
-| POST   | /api/ai/suggest-price   | Sugerir precio   |
+- `POST /api/auth/register` — Registrar usuario
+- `POST /api/auth/login` — Iniciar sesión
+- `GET /api/auth/me` — Datos del usuario actual
+- `GET /api/products` — Listar productos
+- `POST /api/products` — Crear producto
+- `GET /api/invoices` — Listar facturas
+- `POST /api/invoices` — Crear factura
+- `POST /api/invoices/{invoice_id}/items` — Añadir item a factura
+- `GET /api/providers` — Listar proveedores
+- `POST /api/providers` — Crear proveedor
+- `POST /api/ai/analyze-invoice` — Analizar factura con IA
+- `POST /api/ai/suggest-price` — Sugerir precio
 
----
+## 🧪 Pruebas
 
-## ⚠️ Problemas comunes
-
-### ❌ Error 401 Unauthorized
-
-➡️ Debes enviar el token en headers:
-
-```http
-Authorization: Bearer TOKEN
+```bash
+pytest -q
 ```
 
----
+## 🐳 Docker
 
-### ❌ No carga el frontend
+Construir imagen:
 
-➡️ Asegúrate de tener:
-
-```
-static/index.html
+```bash
+docker build -t facturacionnow .
 ```
 
----
+Iniciar contenedor:
 
-### ❌ Error OpenAI
+```bash
+docker run -p 8000:8000 -e JWT_SECRET_KEY=mi_secreto facturacionnow
+```
 
-➡️ Verifica tu `.env`
+## 📌 Notas de producción
 
----
+- Revisa `JWT_SECRET_KEY` antes de desplegar
+- Cambia `DATABASE_URL` a PostgreSQL cuando el proyecto escale
+- El endpoint `/api/documents/placeholders` está listo para integrar el SRI oficial
+- El frontend usa `Bearer token` y `fetchWithAuth()`
 
-## 🚀 Deploy (próximamente)
+## ✅ Estado actual
 
-Puedes desplegar en:
-
-* Render
-* Railway
-* VPS
-
----
-
-## 👨‍💻 Autor
-
-**Luis Avilés**
-GitHub: https://github.com/avileslucasluis-coder
-
----
-
-## 📜 Licencia
-
-Uso libre para aprendizaje y proyectos personales.
+- Backend modular y listo
+- Frontend administrativo funcional
+- Autenticación JWT real
+- Base de datos preparada para facturación y retenciones
+- CI/CD con GitHub Actions
+- Docker listo

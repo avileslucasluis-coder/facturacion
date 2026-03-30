@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from typing import Optional, List, Dict, Tuple
-from src.core.backend import Database
+from src.db.database import Database
 from src.core.security import SecurityManager
 from src.core.sri_validator import SRIValidator
 from reportlab.pdfgen import canvas
